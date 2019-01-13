@@ -50,7 +50,7 @@
 
 
 
-        <table lay-filter="member-data"  class="layui-table" lay-data="{ url:'/member-list2-data', page:true, id:'member'}" >
+        <table lay-filter="member-data"  class="layui-table" lay-data="{ url:'/admin/member-list-data', page:true, id:'member'}" >
             <thead>
             <tr>
                 <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
@@ -101,7 +101,7 @@
                             //几个参数需要注意一下
                             type: "DELETE",//方法类型
                             dataType: "json",//预期服务器返回的数据类型
-                            url: "/member-del?id="+data.id ,//url
+                            url: "/admin/member-del?id="+data.id ,//url
                             //data: {id:"403"},
                             complete:function(XMLHttpRequest,testStatus){
                                 if (XMLHttpRequest.status == 400){

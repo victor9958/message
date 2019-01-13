@@ -23,7 +23,7 @@ func init() {
 	//beego.Router("/admin/member-list3", &controllers.MemberController{},"get:List3")
 	beego.Router("/admin/member-add", &controllers.MemberController{},"get:Add")//跳页面
 	beego.Router("/admin/member-add-admin", &controllers.MemberController{},"post:AddAdmin")//跳页面
-	beego.Router("/admin/member-list2-data", &controllers.MemberController{},"get:ListData")
+	beego.Router("/admin/member-list-data", &controllers.MemberController{},"get:ListData")
 	beego.Router("/admin/member-del", &controllers.MemberController{},"delete:Del")
 
 

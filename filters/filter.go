@@ -20,7 +20,7 @@ func IsLogin(ctx *context.Context) {
 	}
 	nowTime := time.Now().Unix()
 	beego.Info(nowTime)
-	if res := nowTime - int64(timeInt+600);res>0 {
+	if res := nowTime - int64(timeInt+3600*24);res>0 {
 		ctx.Redirect(302,"/login-page")
 	}
 }
