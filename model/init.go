@@ -22,7 +22,7 @@ func init(){
 	orm.RegisterDataBase("default", "mysql", fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8",
 		user, passwd, host, port, dbname))
 
-	orm.RegisterModel(new(Admin))
+	orm.RegisterModel(new(Admin),new(Job),new(Permissions))
 
 	if beego.AppConfig.String("runmode") == "dev" {
 		orm.Debug = true

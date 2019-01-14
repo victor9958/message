@@ -3,7 +3,6 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"message/funcs"
 	"strconv"
 	"strings"
 )
@@ -100,6 +99,11 @@ func(this *BaseController)GetPage(o orm.QuerySeter)(orm.QuerySeter,*MyPage,error
 
 
 func(this *BaseController)Ceshi(){
-	pwd := funcs.MakeMd5("123456")
-	this.ReturnJson(pwd,200)
+	beego.Info("ceshi")
+	var maps orm.ParamsList
+	_,err := orm.NewOrm().QueryTable("admin").ValuesFlat(&maps,"Id")
+	if err!= nil {
+		this.ReturnJson(err,200)
+	}
+	this.ReturnJson(maps,200)
 }

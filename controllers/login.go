@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"message/funcs"
 	"message/model"
+	"strconv"
 	"time"
 )
 
@@ -25,13 +26,13 @@ func(this *LoginController)Login(){
 	}
 
 	//md5加密 pwd
-	beego.Info(pwd)
+	//beego.Info(pwd)
 	//has := md5.Sum([]byte(pwd+"yan"))
 	//pwdMB := fmt.Sprintf("%x",has)
 
 
 	pwdMB := funcs.MakeMd5(pwd+"yan")
-	beego.Info(pwdMB)
+	//beego.Info(pwdMB)
 	//查询user表
 	var admin model.Admin
 	err := orm.NewOrm().QueryTable("admin").Filter("mobile",mobile).One(&admin)
@@ -39,12 +40,15 @@ func(this *LoginController)Login(){
 		this.ReturnJson(map[string]string{"message":"查无此用户"},400)
 	}
 	if admin.Password == pwdMB {
+		idStr := strconv.Itoa(admin.Id)
+		beego.Info("time:"+idStr)
 		this.SetSession("user_mobile",mobile)
 		this.SetSession("user_name",admin.Name)
 		this.SetSession("user_id",admin.Id)
 		this.SetSession("login_time",	time.Now().Unix())
+
+		model.MyRedis.Put("time:"+idStr,time.Now().Unix(),1000*time.Second)
 		beego.Info(time.Now().Unix())
-		model.MyRedis.Put("time",time.Now().Unix(),1000*time.Second)
 		this.ReturnJson(map[string]string{"message":"登录成功"},200)
 	}
 	this.ReturnJson(map[string]string{"message":"密码错误"},400)
@@ -56,5 +60,6 @@ func(this *LoginController)ReturnJson(data interface{},status int){
 }
 
 func(this *LoginController)LoginPage(){
+
 	this.TplName = "login.html"
 }

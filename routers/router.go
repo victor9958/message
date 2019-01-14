@@ -19,14 +19,15 @@ func init() {
 	beego.Router("/admin/wel", &controllers.BaseController{},"get:Wel")
 
 	beego.Router("/admin/member-list", &controllers.MemberController{},"get:List")
-	//beego.Router("/admin/member-list2", &controllers.MemberController{},"get:List2")
-	//beego.Router("/admin/member-list3", &controllers.MemberController{},"get:List3")
 	beego.Router("/admin/member-add", &controllers.MemberController{},"get:Add")//跳页面
 	beego.Router("/admin/member-add-admin", &controllers.MemberController{},"post:AddAdmin")//跳页面
 	beego.Router("/admin/member-list-data", &controllers.MemberController{},"get:ListData")
 	beego.Router("/admin/member-del", &controllers.MemberController{},"delete:Del")
 
 
+	//job
+	beego.Router("/admin/job-list", &controllers.JobController{},"get:List")
+	beego.Router("/admin/job-list-data", &controllers.JobController{},"get:ListData")
 
 	beego.Router("/ceshi", &controllers.BaseController{},"get:Ceshi")
 
