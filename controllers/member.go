@@ -22,7 +22,7 @@ func(this *MemberController)List(){
 /*
 	跳添加页面
  */
-func(this *MemberController)Add(){
+func(this *MemberController)AddPage(){
 	this.TplName="member-add.html"
 }
 

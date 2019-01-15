@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"message/model"
 	"strconv"
 	"strings"
 )
@@ -99,11 +100,18 @@ func(this *BaseController)GetPage(o orm.QuerySeter)(orm.QuerySeter,*MyPage,error
 
 
 func(this *BaseController)Ceshi(){
-	beego.Info("ceshi")
-	var maps orm.ParamsList
-	_,err := orm.NewOrm().QueryTable("admin").ValuesFlat(&maps,"Id")
-	if err!= nil {
-		this.ReturnJson(err,200)
+
+	var permissions []*model.Permissions
+	var p2 []*model.PermissionsNode
+	_,err := orm.NewOrm().QueryTable("permissions").Filter("type",1).All(&permissions)
+	for _,v := range permissions{
+		p2 = append(p2,&model.PermissionsNode{*v,make([]*model.PermissionsNode,0)})
 	}
-	this.ReturnJson(maps,200)
+	data := model.BuildData(p2)
+	list := model.MakeTreeCore(0,data)
+	if err != nil {
+		this.ReturnJson(map[string]string{"message":"列表查询出错"+err.Error()},400)
+	}
+
+	this.ReturnJson(list,200)
 }

@@ -19,7 +19,7 @@ func init() {
 	beego.Router("/admin/wel", &controllers.BaseController{},"get:Wel")
 
 	beego.Router("/admin/member-list", &controllers.MemberController{},"get:List")
-	beego.Router("/admin/member-add", &controllers.MemberController{},"get:Add")//跳页面
+	beego.Router("/admin/member-add", &controllers.MemberController{},"get:AddPage")//跳页面
 	beego.Router("/admin/member-add-admin", &controllers.MemberController{},"post:AddAdmin")//跳页面
 	beego.Router("/admin/member-list-data", &controllers.MemberController{},"get:ListData")
 	beego.Router("/admin/member-del", &controllers.MemberController{},"delete:Del")
@@ -28,6 +28,10 @@ func init() {
 	//job
 	beego.Router("/admin/job-list", &controllers.JobController{},"get:List")
 	beego.Router("/admin/job-list-data", &controllers.JobController{},"get:ListData")
+	beego.Router("/admin/job-del", &controllers.JobController{},"delete:Del")
+	beego.Router("/admin/job-add", &controllers.JobController{},"get:AddPage")
+	beego.Router("/admin/job-add-data", &controllers.JobController{},"post:Add")
+
 
 	beego.Router("/ceshi", &controllers.BaseController{},"get:Ceshi")
 

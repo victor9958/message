@@ -52,64 +52,51 @@
     <div class="left-nav">
       <div id="side-nav">
         <ul id="nav">
+
+
+            {{range $k,$v:= .data}}
+
+
             <li>
                 <a href="javascript:;">
                     <i class="iconfont">&#xe6b8;</i>
-                    <cite>会员管理</cite>
+                    <cite>{{$v.Title}}</cite>
                     <i class="iconfont nav_right">&#xe697;</i>
                 </a>
+
+                {{range $kk,$vv := $v.PermissionsNodes}}
                 <ul class="sub-menu">
                     <li>
-                        <a _href="/admin/member-list">
+                        <a _href="{{$vv.Rule}}">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>会员列表</cite>
+                            <cite>{{$vv.Title}}</cite>
                             
                         </a>
                     </li >
 
-                    <li>
-                        <a _href="/admin/job-list">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>职位列表</cite>
 
-                        </a>
-                    </li >
-
-
-
-                    <li>
-                        <a href="javascript:;">
-                            <i class="iconfont">&#xe70b;</i>
-                            <cite>会员管理</cite>
-                            <i class="iconfont nav_right">&#xe697;</i>
-                        </a>
-                        <ul class="sub-menu">
-                            <li>
-                                <a _href="xxx.html">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>会员列表</cite>
-                                    
-                                </a>
-                            </li >
-                            <li>
-                                <a _href="xx.html">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>会员删除</cite>
-                                    
-                                </a>
-                            </li>
-                            <li>
-                                <a _href="xx.html">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>等级管理</cite>
-                                    
-                                </a>
-                            </li>
-                            
-                        </ul>
-                    </li>
                 </ul>
+
+                {{end}}
+
+
+
+
             </li>
+
+            {{end}}
+
+
+
+
+
+
+
+
+
+
+
+
             <li>
                 <a href="javascript:;">
                     <i class="iconfont">&#xe723;</i>
