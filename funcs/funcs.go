@@ -20,4 +20,10 @@ func MakeMd5(str string)string{
 //	}
 //}
 
+//字符串转数组
+//func Emplode(s string,del string,arr []string){
+//	u_s := []rune(s)
+//	u_del := []rune(del)
+//}
+
 
