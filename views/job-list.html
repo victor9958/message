@@ -57,7 +57,7 @@
         </table>
 
         <script type="text/html" id="barDemo">
-            <a class="layui-btn layui-btn-primary layui-btn-xs" onclick="x_admin_show('添加权限','/admin/change-job-role-page',800,600)" lay-event="detail">添加权限</a>
+            <a class="layui-btn layui-btn-primary layui-btn-xs"  lay-event="detail">添加权限</a>
             <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
         </script>
@@ -79,7 +79,7 @@
             table.on('tool(job-data)', function(obj){
                 var data = obj.data;
                 if(obj.event === 'detail'){
-                    // layer.msg('ID：'+ data.id + ' 的查看操作');layer
+                    x_admin_show('添加权限','/admin/change-job-role-page?job_id='+data.id,800,600);
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
                         obj.del();
@@ -135,54 +135,7 @@
 
         });
 
-       /*用户-停用*/
-      function member_stop(obj,id){
-          layer.confirm('确认要停用吗？',function(index){
 
-              if($(obj).attr('title')=='启用'){
-
-                //发异步把用户状态进行更改
-                $(obj).attr('title','停用')
-                $(obj).find('i').html('&#xe62f;');
-
-                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-                layer.msg('已停用!',{icon: 5,time:1000});
-
-              }else{
-                $(obj).attr('title','启用')
-                $(obj).find('i').html('&#xe601;');
-
-                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-                layer.msg('已启用!',{icon: 5,time:1000});
-              }
-              
-          });
-      }
-
-      /*用户-删除*/
-      function member_del(obj,id){
-          layer.confirm('确认要删除吗？',function(index){
-            console.log(id);
-              $.ajax({
-                  //几个参数需要注意一下
-                  type: "DELETE",//方法类型
-                  dataType: "json",//预期服务器返回的数据类型
-                  url: "/member-del?id="+id ,//url
-                  //data: {id:"403"},
-                  complete:function(XMLHttpRequest,testStatus){
-                      if (XMLHttpRequest.status == 400){
-                          layer.alert(XMLHttpRequest.responseJSON.message,{icon:5})
-                      }
-                      if (XMLHttpRequest.status == 200) {
-                          layer.alert(XMLHttpRequest.responseJSON.message,{icon: 6})
-                      }
-                  },
-
-              });
-              $(obj).parents("tr").remove();
-              layer.msg('已删除!',{icon:1,time:1000});
-          });
-      }
 
 
 

@@ -20,10 +20,25 @@ func MakeMd5(str string)string{
 //	}
 //}
 
-//字符串转数组
-//func Emplode(s string,del string,arr []string){
-//	u_s := []rune(s)
-//	u_del := []rune(del)
-//}
+//字符串转数组 只能切割单个字符 或者 单个汉字 range 循环 自动转成utf-8
+func Emplode(s string,del string)[]string{
+	//u_s := []rune(s)
+	//u_del := []rune(del)
+	var arr []string
+	temp := ""
+	for _,v := range s{
+
+		if  string(v) == del{
+			arr  = append(arr,temp)
+			temp = ""
+		}else{
+			temp = temp+string(v)
+		}
+	}
+	if temp !="" {
+		arr  = append(arr,temp)
+	}
+	return arr
+}
 
 

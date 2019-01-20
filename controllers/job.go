@@ -96,6 +96,14 @@ func(this *JobController)Add(){
 
 
 func (this *JobController)ChangeJobRolePage(){
+	jobIdStr := this.GetString("job_id")
+	if jobIdStr == "" {
+		this.ReturnJson(map[string]string{"message":"请传入职位id"},400)
+	}
+	jobId,err3 := strconv.Atoi(jobIdStr)
+	if err3 != nil {
+		this.ReturnJson(map[string]string{"message":"请传入正确的职位id"},400)
+	}
 	var permissions []*model.Permissions
 	var p2 []*model.PermissionsNode
 	_,err := orm.NewOrm().QueryTable("permissions").Filter("type",1).All(&permissions)
@@ -109,6 +117,7 @@ func (this *JobController)ChangeJobRolePage(){
 	list := model.MakeTreeCore(0,data)
 
 	this.Data["data"] = list
+	this.Data["job_id"] = jobId
 	this.TplName = "role-job-list.html"
 }
 

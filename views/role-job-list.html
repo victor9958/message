@@ -24,6 +24,30 @@
     <div class="x-body layui-anim layui-anim-up">
         <form class="layui-form" action="">
 
+
+            <table  class="layui-table layui-input-block">
+                <tbody>
+
+                {{range $k,$v:= .data}}
+                <tr>
+                <td>
+                    <input name="auth[]" type="checkbox" value="" title="{{$v.Title}}" lay-filter='group' id='group'>
+                </td>
+                {{range $kk,$vv := $v.PermissionsNodes}}
+                <td>
+                    <div class="layui-input-block">
+                        <input name="auth[]" type="checkbox" value="{{$vv.Id}}" title="{{$vv.Title}}" class='group' lay-filter='group_child' check_child='group'>
+
+                    </div>
+                </td>
+                {{end}}
+                </tr>
+
+                        {{end}}
+                </tbody>
+            </table>
+            <input type="hidden" name="job_id" value="{{.job_id}}">
+
         {{range $k,$v:= .data}}
 
     <li>
@@ -76,6 +100,34 @@
                     ,layedit = layui.layedit
                     ,laydate = layui.laydate;
 
+            //父节点全选/全不选
+            form.on('checkbox(group)', function(data){
+                var check = "."+data.elem.id+"";//获取父节点的id
+                $(check).prop('checked',$(this).prop("checked"));//将和父节点id相同class的子节点选中
+                form.render();//更新全部
+            });
+
+            //子节点
+            form.on('checkbox(group_child)',function(data){
+                var check = '.'+data.elem.attributes['check_child'].value;//当前子节点下的check_child的值
+                var idcheck = '#'+data.elem.attributes['check_child'].value;
+                var test = 1;//定义一个初始值
+                for (var i = $(check).length - 1; i >= 0; i--) {
+                    if($(check).eq(i).prop("checked")){
+                        test = 2;//当有复选框被选中时，初始值更改为2
+                    }
+                }
+
+                if(test == 1){
+                    $(idcheck).prop('checked',false);//如果初始值依旧为一，说明没有子节点的复选框被选中,则将和子节点相同class的
+                }else{
+                    $(idcheck).prop('checked',true);//否则将父节点全选框选中
+                }
+                form.render();//更新全部
+
+            });
+
+
 
 
             //监听指定开关
@@ -100,17 +152,6 @@
 
                 return false;
             });
-
-            //表单初始赋值
-            form.val('example', {
-                "username": "贤心" // "name": "value"
-                ,"password": "123456"
-                ,"interest": 1
-                ,"like[write]": true //复选框选中状态
-                ,"close": true //开关状态
-                ,"sex": "女"
-                ,"desc": "我爱 layui"
-            })
 
 
         });
