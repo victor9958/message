@@ -6,6 +6,7 @@ type Job struct {
 	Id int             		`json:"id"`
 	//Uuid string     		`json:"uuid"`
 	Name string     		`json:"name"`
+	RoleIds string     		`json:"role_ids"`
 	//Email string   			`json:"email"`
 	//Mobile string   		`json:"mobile"`
 	//JobNo string   			`json:"job_no"`

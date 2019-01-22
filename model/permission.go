@@ -1,6 +1,7 @@
 package model
 
 import (
+	//"github.com/astaxie/beego/validation"
 	"time"
 )
 
@@ -24,7 +25,7 @@ type Permissions struct {
 
 type PermissionsNode struct {
 	Permissions
-	PermissionsNodes 	[]*PermissionsNode 	`json:"children"`
+	PermissionsNodes 	*[]PermissionsNode 	`json:"children"`
 }
 // level  = 0
 //func MakeTree(pNode []*PermissionsNode,p []*Permissions,level int) {
@@ -65,12 +66,38 @@ func BuildData(list []*PermissionsNode) map[int]map[int]*PermissionsNode {
 
 func MakeTreeCore(index int, data map[int]map[int]*PermissionsNode) []*PermissionsNode {
 	tmp := make([]*PermissionsNode, 0)
-	for id, item := range data[index] {
-		if data[id] != nil {
-			item.PermissionsNodes = MakeTreeCore(id, data)
-		}
-		tmp = append(tmp, item)
-	}
+	//for id, item := range data[index] {
+	//	if data[id] != nil {
+	//		item.PermissionsNodes = MakeTreeCore(id, data)
+	//	}
+	//	tmp = append(tmp, item)
+	//}
 	return tmp
+}
+
+
+type List struct {
+	Id       int
+	Title    string
+	ParentId int
+	Icon     string
+	Path     string
+	Children *[]List
+}
+
+func MakeTree(Trees []Permissions, parentId int, nodeList *[]PermissionsNode) {
+	for _, val := range Trees {
+
+		if parentId == val.ParentId {
+
+			temp := make([]PermissionsNode, 0)
+
+			child := PermissionsNode{val,  &temp}
+
+			*nodeList = append(*nodeList, child)
+
+			MakeTree(Trees, val.Id, &temp)
+		}
+	}
 }
 

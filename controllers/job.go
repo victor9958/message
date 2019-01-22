@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"message/model"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -105,19 +106,16 @@ func (this *JobController)ChangeJobRolePage(){
 	if err3 != nil {
 		this.ReturnJson(map[string]string{"message":"请传入正确的职位id"},400)
 	}
-	var permissions []*model.Permissions
-	var p2 []*model.PermissionsNode
-	_,err := orm.NewOrm().QueryTable("permissions").Filter("deleted_at__isnull",true).OrderBy("-id").All(&permissions)
+	var permissions []model.Permissions
+	var p2 []model.PermissionsNode
+	_,err := orm.NewOrm().QueryTable("permissions").
+		Filter("deleted_at__isnull",true).OrderBy("-id").All(&permissions)
 	if err != nil {
 		this.ReturnJson(map[string]string{"message":"列表查询出错"+err.Error()},400)
 	}
-	for _,v := range permissions{
-		p2 = append(p2,&model.PermissionsNode{*v,make([]*model.PermissionsNode,0)})
-	}
-	data := model.BuildData(p2)
-	list := model.MakeTreeCore(0,data)
+	model.MakeTree(permissions,0,&p2)
 
-	this.Data["data"] = list
+	this.Data["data"] = p2
 	this.Data["job_id"] = jobId
 	this.TplName = "role-job-list.html"
 }
@@ -133,13 +131,16 @@ func (this *JobController)ChangeRole(){
 	}
 
 	roleIds := this.GetString("role_ids")
+	roleIds = strings.Replace(roleIds," ","",-1)
+	beego.Info(roleIds)
 	num,err2 := orm.NewOrm().QueryTable("job").Filter("id",jobId).Update(orm.Params{
 		"role_ids":roleIds,
 	})
+	if err2 != nil || num==0{
+		this.ReturnJson(map[string]string{"message":"修改失败"},400)
+	}
 
-
-	beego.Info(jobIdStr)
-	this.ReturnJson(map[string]string{"message":"ｉｄ＝"+jobIdStr},200)
+	this.ReturnJson(map[string]string{"message":"修改成功"},200)
 
 }
 

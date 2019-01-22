@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"message/funcs"
+	"message/model"
 	"strconv"
 	"strings"
 )
@@ -102,11 +102,14 @@ func(this *BaseController)GetPage(o orm.QuerySeter)(orm.QuerySeter,*MyPage,error
 
  */
 func(this *BaseController)Ceshi(){
-	str := "我只一个一个的小月亮"
-	arr := funcs.Emplode(str,"一")
-	//if err != nil {
-	//	this.ReturnJson(map[string]string{"message":"列表查询出错"+err.Error()},400)
-	//}
+	var permissions []model.Permissions
+	var p2 []model.PermissionsNode
+	_,err := orm.NewOrm().QueryTable("permissions").OrderBy("-id").All(&permissions)
+	if err != nil {
+		this.ReturnJson(map[string]string{"message":"列表查询出错"+err.Error()},400)
+	}
 
-	this.ReturnJson(arr,200)
+	model.MakeTree(permissions,0,&p2)
+
+	this.ReturnJson(p2,200)
 }
