@@ -79,7 +79,7 @@
             table.on('tool(job-data)', function(obj){
                 var data = obj.data;
                 if(obj.event === 'detail'){
-                    x_admin_show('添加权限','/admin/change-job-role-page?job_id='+data.id,800,600);
+                    x_admin_show('添加权限','/admin/change-job-role-page?job_id='+data.id,1000,700);
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
                         obj.del();

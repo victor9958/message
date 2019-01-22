@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"message/model"
 	"strconv"
@@ -106,7 +107,7 @@ func (this *JobController)ChangeJobRolePage(){
 	}
 	var permissions []*model.Permissions
 	var p2 []*model.PermissionsNode
-	_,err := orm.NewOrm().QueryTable("permissions").Filter("type",1).All(&permissions)
+	_,err := orm.NewOrm().QueryTable("permissions").Filter("deleted_at__isnull",true).OrderBy("-id").All(&permissions)
 	if err != nil {
 		this.ReturnJson(map[string]string{"message":"列表查询出错"+err.Error()},400)
 	}
@@ -121,5 +122,24 @@ func (this *JobController)ChangeJobRolePage(){
 	this.TplName = "role-job-list.html"
 }
 
+func (this *JobController)ChangeRole(){
+	jobIdStr := this.GetString("job_id")
+	if jobIdStr == "" {
+		this.ReturnJson(map[string]string{"message":"缺少职位ｉｄ"},400)
+	}
+	jobId,err := strconv.Atoi(jobIdStr)
+	if err != nil {
+		this.ReturnJson(map[string]string{"message":"职位ｉｄ请传入数字"},400)
+	}
 
+	roleIds := this.GetString("role_ids")
+	num,err2 := orm.NewOrm().QueryTable("job").Filter("id",jobId).Update(orm.Params{
+		"role_ids":roleIds,
+	})
+
+
+	beego.Info(jobIdStr)
+	this.ReturnJson(map[string]string{"message":"ｉｄ＝"+jobIdStr},200)
+
+}
 

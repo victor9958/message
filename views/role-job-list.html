@@ -31,12 +31,12 @@
                 {{range $k,$v:= .data}}
                 <tr>
                 <td>
-                    <input name="auth[]" type="checkbox" value="" title="{{$v.Title}}" lay-filter='group' id='group'>
+                    <input name="auth" type="checkbox" value="" title="{{$v.Title}}" lay-filter='group' id='group{{$k}}'>
                 </td>
                 {{range $kk,$vv := $v.PermissionsNodes}}
                 <td>
                     <div class="layui-input-block">
-                        <input name="auth[]" type="checkbox" value="{{$vv.Id}}" title="{{$vv.Title}}" class='group' lay-filter='group_child' check_child='group'>
+                        <input name="auth" type="checkbox" value="{{$vv.Id}}" title="{{$vv.Title}}" class='group{{$k}}' lay-filter='group_child' check_child='group{{$k}}'>
 
                     </div>
                 </td>
@@ -48,34 +48,6 @@
             </table>
             <input type="hidden" name="job_id" value="{{.job_id}}">
 
-        {{range $k,$v:= .data}}
-
-    <li>
-        <a href="javascript:;">
-            <i class="iconfont">&#xe6b8;</i>
-            <cite>{{$v.Title}}</cite>
-            <i class="iconfont nav_right">&#xe697;</i>
-        </a>
-
-    {{range $kk,$vv := $v.PermissionsNodes}}
-
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">复选框</label>
-            <div class="layui-input-block">
-                <input type="checkbox" name="role" value="{{$vv.Id}}" title="{{$vv.Title}}">
-            </div>
-        </div>
-
-
-    {{end}}
-
-
-
-
-    </li>
-
-{{end}}
 
 
 
@@ -142,12 +114,26 @@
             form.on('submit(demo1)', function(data){
                 //获取checkbox［name='checked'］的值
                 var arr = new Array()
-                $("input:checkbox[name='role']:checked").each(function (i) {
+                $("input:checkbox[name='auth']:checked").each(function (i) {
                     arr[i]=$(this).val()
                 });
-                data.field.role  = arr.join(","); //将数组合并成字符串
-                layer.alert(JSON.stringify(data.field), {
-                    title: '最终的提交信息'
+                data.field.role_ids  = arr.join(","); //将数组合并成字符串
+
+                $.ajax({
+                    //几个参数需要注意一下
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: "/admin/job-change-role" ,//url
+                    data: data.field,
+                    complete:function(XMLHttpRequest,testStatus){
+                        if (XMLHttpRequest.status == 400){
+                            layer.alert(XMLHttpRequest.responseJSON.message,{icon:5})
+                        }
+                        if (XMLHttpRequest.status == 200) {
+                            layer.alert(XMLHttpRequest.responseJSON.message,{icon:6})
+                        }
+                    },
+
                 });
 
                 return false;

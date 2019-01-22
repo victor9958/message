@@ -13,7 +13,7 @@ func (this *IndexController) Index() {
 	//获取ｊｏｂ列表
 	var permissions []*model.Permissions
 	var p2 []*model.PermissionsNode
-	_,err := orm.NewOrm().QueryTable("permissions").Filter("type",1).All(&permissions)
+	_,err := orm.NewOrm().QueryTable("permissions").Filter("type",1).OrderBy("-id").All(&permissions)
 	if err != nil {
 		this.ReturnJson(map[string]string{"message":"列表查询出错"+err.Error()},400)
 	}

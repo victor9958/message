@@ -32,6 +32,7 @@ func init() {
 	beego.Router("/admin/job-add", &controllers.JobController{},"get:AddPage")
 	beego.Router("/admin/change-job-role-page", &controllers.JobController{},"get:ChangeJobRolePage")
 	beego.Router("/admin/job-add-data", &controllers.JobController{},"post:Add")
+	beego.Router("/admin/job-change-role", &controllers.JobController{},"post:ChangeRole")
 
 
 	beego.Router("/ceshi", &controllers.BaseController{},"get:Ceshi")
