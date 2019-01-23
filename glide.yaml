@@ -1,0 +1,16 @@
+package: message
+import:
+- package: github.com/astaxie/beego
+  version: ^1.11.1
+  subpackages:
+  - cache
+  - cache/redis
+  - context
+  - orm
+  - session
+- package: github.com/go-sql-driver/mysql
+  version: ^1.4.1
+- package: github.com/gomodule/redigo
+  version: ^2.0.0
+  subpackages:
+  - redis

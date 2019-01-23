@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"message/funcs"
 	"message/model"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -124,4 +126,52 @@ func(this *MemberController)Del(){
 	this.ReturnJson(map[string]string{"message":"删除成功"},200)
 
 
+}
+
+
+func (this *MemberController)ChangeJobPage(){
+	adminIdStr := this.GetString("admin_id")
+	if adminIdStr == "" {
+		this.ReturnJson(map[string]string{"message":"缺少ｉｄ"},400)
+	}
+	adminId,err := strconv.Atoi(adminIdStr)
+	if err!= nil {
+		this.ReturnJson(map[string]string{"message":"传入ｉｄ不是数字"},400)
+	}
+
+	//所有的职位
+	var job []*model.Job
+	_,err2 := orm.NewOrm().QueryTable("job").Filter("deleted_at__isnull",true).OrderBy("-id").All(&job)
+	if err2 != nil {
+		this.ReturnJson(map[string]string{"message":"查询错误"},400)
+	}
+
+	this.Data["data"] = job
+	this.Data["admin_id"]=adminId
+	this.TplName="member-job-list.html"
+}
+
+func(this *MemberController)ChangeJob(){
+	adminIdStr := this.GetString("admin_id")
+	if adminIdStr == "" {
+		this.ReturnJson(map[string]string{"message":"缺少ｉｄ"},400)
+	}
+	adminId,err := strconv.Atoi(adminIdStr)
+	if err!= nil {
+		this.ReturnJson(map[string]string{"message":"传入ｉｄ不是数字"},400)
+	}
+
+	job_ids := this.GetString("job_ids")
+	beego.Info(job_ids)
+	job_ids = strings.Replace(job_ids," ","",-1)
+	job_ids = strings.Replace(job_ids,",,",",",-1)
+
+
+	_,err2 := orm.NewOrm().QueryTable("admin").Filter("id",adminId).Update(orm.Params{
+		"job_ids":job_ids,
+	})
+	if err2 != nil{
+		this.ReturnJson(map[string]string{"message":"修改失败"+err2.Error()},400)
+	}
+	this.ReturnJson(map[string]string{"message":"修改成功"},200)
 }

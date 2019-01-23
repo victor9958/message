@@ -1,11 +1,14 @@
 package filters
 
 import (
-	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego"
-	_"github.com/astaxie/beego/session"
+	"github.com/astaxie/beego/context"
+	"github.com/astaxie/beego/orm"
+	_ "github.com/astaxie/beego/session"
+	"message/funcs"
 	"message/model"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -14,28 +17,22 @@ func IsLogin(ctx *context.Context) {
 	//string(model.MyRedis.Get("time").([]byte))
 	userId := ctx.Input.CruSession.Get("user_id")
 	if userId == nil {
-		beego.Info("user_id==nil")
 		ctx.Redirect(302,"/login-page")
 		return
 	}
-	beego.Info(userId)
 	id,ok := userId.(int)
 
 	idStr := strconv.Itoa(id)
 	if !ok {
-		beego.Info("isLogin_ok")
 		ctx.Redirect(302,"/login-page")
 		return
 	}
 	timeByte := model.MyRedis.Get("time:"+idStr)
-	beego.Info("time_byte")
 	if timeByte == nil {
-		beego.Info("time_byte_redirect")
 		ctx.Redirect(302,"/login-page")
 		return
 	}
 	timeStr := string(timeByte.([]byte))
-	beego.Info("time_str")
 
 	if timeStr == "" {
 		ctx.Redirect(302,"/login-page")
@@ -43,16 +40,60 @@ func IsLogin(ctx *context.Context) {
 	}
 	timeInt,err  := strconv.Atoi(timeStr)
 	if err!=nil {
-		beego.Error(err)
 		ctx.Redirect(302,"/login-page")
 		return
 	}
 	nowTime := time.Now().Unix()
-	beego.Info(nowTime)
 	//if res := nowTime - int64(timeInt+3600*24);res>0 {
 	if res := nowTime - int64(timeInt+24*3600);res>0 {
 		ctx.Redirect(302,"/login-page")
 		return
 	}
-	beego.Info("isLogin_end")
 }
+
+func Auth(ctx *context.Context){
+	beego.Info("auth_start")
+	userId := ctx.Input.CruSession.Get("user_id")
+	if userId == nil {
+		ctx.Redirect(302,"/login-page")
+		return
+	}
+	id,ok := userId.(int)
+	if !ok {
+		ctx.Redirect(302,"/login-page")
+		return
+	}
+	var admin model.Admin
+	err := orm.NewOrm().QueryTable("admin").Filter("id",id).One(&admin)
+	if err != nil {
+		ctx.Redirect(302,"/login-page")
+		return
+	}
+	if  admin.JobIds == ""{
+		ctx.Redirect(302,"/login-page")
+		return
+	}
+	arr := funcs.Emplode(admin.JobIds,",")
+	var jobs *[]model.Job
+	num,err2 := orm.NewOrm().QueryTable("job").Filter("id__in",arr).All(&jobs)
+	if err2 != nil  || num == 0 {
+		ctx.Redirect(302,"/login-page")
+		return
+	}
+	permissionStr := ""
+	for _,v := range *jobs{
+		permissionStr +=v.RoleIds
+	}
+	arr2 := strings.Split(permissionStr,",")
+	arr3 := funcs.GetIdArr(arr2)
+
+	var urls orm.ParamsList
+	num,err2 := orm.NewOrm().QueryTable("permissions").Filter("id__in",arr3).ValuesFlat(&urls,"rule")
+
+	model.MyRedis.Put("time:"+idStr,time.Now().Unix(),1000*time.Second)
+
+
+
+}
+
+

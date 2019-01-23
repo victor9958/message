@@ -31,7 +31,7 @@
                 {{range $k,$v:= .data}}
                 <tr>
                 <td>
-                    <input name="auth" type="checkbox" value="" title="{{$v.Title}}" lay-filter='group' id='group{{$k}}'>
+                    <input name="auth" type="checkbox" value="{{$v.Id}}" title="{{$v.Title}}" lay-filter='group' id='group{{$k}}'>
                 </td>
                 {{range $kk,$vv := $v.PermissionsNodes}}
                 <td>

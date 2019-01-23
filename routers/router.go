@@ -23,6 +23,8 @@ func init() {
 	beego.Router("/admin/member-add-admin", &controllers.MemberController{},"post:AddAdmin")//跳页面
 	beego.Router("/admin/member-list-data", &controllers.MemberController{},"get:ListData")
 	beego.Router("/admin/member-del", &controllers.MemberController{},"delete:Del")
+	beego.Router("/admin/change-job-page", &controllers.MemberController{},"get:ChangeJobPage")
+	beego.Router("/admin/change-job", &controllers.MemberController{},"post:ChangeJob")
 
 
 	//job

@@ -132,6 +132,7 @@ func (this *JobController)ChangeRole(){
 
 	roleIds := this.GetString("role_ids")
 	roleIds = strings.Replace(roleIds," ","",-1)
+	roleIds = strings.Replace(roleIds,",,",",",-1)
 	beego.Info(roleIds)
 	num,err2 := orm.NewOrm().QueryTable("job").Filter("id",jobId).Update(orm.Params{
 		"role_ids":roleIds,
