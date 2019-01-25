@@ -1,14 +1,12 @@
 package filters
 
 import (
+	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	"github.com/astaxie/beego/orm"
 	_ "github.com/astaxie/beego/session"
-	"message/funcs"
 	"message/model"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -54,6 +52,7 @@ func IsLogin(ctx *context.Context) {
 func Auth(ctx *context.Context){
 	beego.Info("auth_start")
 	userId := ctx.Input.CruSession.Get("user_id")
+
 	if userId == nil {
 		ctx.Redirect(302,"/login-page")
 		return
@@ -63,34 +62,35 @@ func Auth(ctx *context.Context){
 		ctx.Redirect(302,"/login-page")
 		return
 	}
-	var admin model.Admin
-	err := orm.NewOrm().QueryTable("admin").Filter("id",id).One(&admin)
-	if err != nil {
-		ctx.Redirect(302,"/login-page")
-		return
-	}
-	if  admin.JobIds == ""{
-		ctx.Redirect(302,"/login-page")
-		return
-	}
-	arr := funcs.Emplode(admin.JobIds,",")
-	var jobs *[]model.Job
-	num,err2 := orm.NewOrm().QueryTable("job").Filter("id__in",arr).All(&jobs)
-	if err2 != nil  || num == 0 {
-		ctx.Redirect(302,"/login-page")
-		return
-	}
-	permissionStr := ""
-	for _,v := range *jobs{
-		permissionStr +=v.RoleIds
-	}
-	arr2 := strings.Split(permissionStr,",")
-	arr3 := funcs.GetIdArr(arr2)
 
-	var urls orm.ParamsList
-	num,err2 := orm.NewOrm().QueryTable("permissions").Filter("id__in",arr3).ValuesFlat(&urls,"rule")
 
-	model.MyRedis.Put("time:"+idStr,time.Now().Unix(),1000*time.Second)
+
+	urlsByte := model.MyRedis.Get("urls:"+strconv.Itoa(id))
+
+	if urlsByte == nil {
+		ctx.Redirect(302,"/login-page")
+		return
+	}
+
+	urlsJson := string(urlsByte.([]byte))
+	beego.Info("urljson")
+	beego.Info(urlsJson)
+
+	if urlsJson == "" {
+		ctx.Redirect(302,"/login-page")
+		return
+	}
+	beego.Info(userId)
+	beego.Info(urlsByte)
+	beego.Info("url")
+	var urls []string
+	err := json.Unmarshal([]byte(urlsJson),urls)
+	beego.Info(urls)
+	beego.Info(err.Error())
+	if err!=nil {
+		ctx.Redirect(302,"/login-page")
+		return
+	}
 
 
 

@@ -1,11 +1,15 @@
 package controllers
 
 import (
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"message/model"
+	"github.com/dgrijalva/jwt-go"
+
+
 	"strconv"
 	"strings"
+	"time"
 )
 
 type BaseController struct {
@@ -20,20 +24,6 @@ type MyPage struct {
 }
 
 func init(){
-	//测试 不生效改用过滤器判断的登陆
-	//beego.Info("base_init_start")
-	//loginStr := string(model.MyRedis.Get("time").([]byte))
-	//beego.Info(loginStr)
-	//loginInt,err := strconv.Atoi(loginStr)
-	//this := new(LoginController)
-	//if err!=nil {
-	//	this.LoginPage()
-	//}
-	//nowTime := time.Now().Unix()
-	//beego.Info(nowTime)
-	//if res := nowTime - int64(loginInt+600);res>0 {
-	//	this.LoginPage()
-	//}
 }
 
 
@@ -102,14 +92,26 @@ func(this *BaseController)GetPage(o orm.QuerySeter)(orm.QuerySeter,*MyPage,error
 
  */
 func(this *BaseController)Ceshi(){
-	var permissions []model.Permissions
-	var p2 []model.PermissionsNode
-	_,err := orm.NewOrm().QueryTable("permissions").OrderBy("-id").All(&permissions)
+	//生成ｔｏｋｅｎ
+ 	var key []byte = []byte("hello world! this is secret!")
+	claims := &jwt.StandardClaims{
+		NotBefore:int64(time.Now().Unix()),
+		ExpiresAt:int64(time.Now().Unix() +1000),
+		Issuer:"Bitch",
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,claims)
+	ss,err := token.SignedString(key)
 	if err != nil {
-		this.ReturnJson(map[string]string{"message":"列表查询出错"+err.Error()},400)
+		this.ReturnJson(err.Error(),400)
 	}
 
-	model.MakeTree(permissions,0,&p2)
-
-	this.ReturnJson(p2,200)
+	//验证ｔｏｋｅｎ
+	b1,err2 := jwt.Parse(ss, func(ss *jwt.Token) (interface{}, error) {
+		return  key,nil
+	})
+	if err2 != nil{
+		this.ReturnJson(err2.Error(),400)
+	}
+	beego.Info(b1)
+	this.ReturnJson(ss,200)
 }
