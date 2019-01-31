@@ -1,6 +1,6 @@
 /conf/app.conf
 /.idea
-myAdmin.exe
+message.exe
 .idea/*
 /.idea/
 /logs/*
