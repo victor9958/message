@@ -145,3 +145,44 @@ func (this *JobController)ChangeRole(){
 
 }
 
+
+func (this *JobController)EditPage(){
+	idStr := this.GetString("job_id")
+	if idStr == "" {
+		this.ReturnJson(map[string]string{"message":"缺少ｉｄ"},400)
+	}
+	id,err := strconv.Atoi(idStr)
+	if err != nil {
+		this.ReturnJson(map[string]string{"message":"id不是数字"},400)
+	}
+	job,err2 := model.GetJobById(id)
+	if err2 != nil {
+		this.ReturnJson(map[string]string{"message":err2.Error()},400)
+	}
+	this.Data["job"] = job
+	this.Data["id"] = idStr
+	this.TplName = "job-edit.html"
+}
+
+func (this *JobController)Edit(){
+	jobIdStr := this.GetString("job_id")
+	if jobIdStr == "" {
+		this.ReturnJson(map[string]string{"message":"缺少职位ｉｄ"},400)
+	}
+	jobId,err := strconv.Atoi(jobIdStr)
+	if err != nil {
+		this.ReturnJson(map[string]string{"message":"职位ｉｄ请传入数字"},400)
+	}
+	name := this.GetString("name")
+	if name == "" {
+		this.ReturnJson(map[string]string{"message":"职位名称不能为空"},400)
+	}
+	_,err2 := orm.NewOrm().QueryTable("job").Filter("id",jobId).Update(orm.Params{
+		"name":name,
+	})
+	if err2 != nil {
+		this.ReturnJson(map[string]string{"message":"修改失败"+err2.Error()},400)
+	}else{
+		this.ReturnJson(map[string]string{"message":"修改成功"},200)
+	}
+}

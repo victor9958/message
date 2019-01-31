@@ -5,7 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/dgrijalva/jwt-go"
-
+	"github.com/pkg/errors"
 
 	"strconv"
 	"strings"
@@ -114,4 +114,18 @@ func(this *BaseController)Ceshi(){
 	}
 	beego.Info(b1)
 	this.ReturnJson(ss,200)
+}
+
+func(this *BaseController)GetStringChangeInt(str string)(int,error){
+	var err error
+	var i int
+	s := this.GetString(str)
+	if s == "" {
+		return i,errors.New(str+"未传入值")
+	}
+	i,err = strconv.Atoi(s)
+	if err != nil {
+		return i,errors.New(str+"请传入数字")
+	}
+	return i,nil
 }

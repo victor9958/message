@@ -51,6 +51,7 @@ func IsLogin(ctx *context.Context) {
 
 func Auth(ctx *context.Context){
 	beego.Info("auth_start")
+	path := ctx.Input.URI()
 	userId := ctx.Input.CruSession.Get("user_id")
 
 	if userId == nil {
@@ -73,25 +74,38 @@ func Auth(ctx *context.Context){
 	}
 
 	urlsJson := string(urlsByte.([]byte))
-	beego.Info("urljson")
-	beego.Info(urlsJson)
+
 
 	if urlsJson == "" {
 		ctx.Redirect(302,"/login-page")
 		return
 	}
-	beego.Info(userId)
-	beego.Info(urlsByte)
-	beego.Info("url")
+
+	//pathOk := strings.Contains(urlsJson,path)
+	//beego.Info(pathOk)
+	//if !pathOk {
+	//	ctx.Redirect(302,"/login-page")
+	//	return
+	//}
+	//有安全隐患
+
+	//
 	var urls []string
-	err := json.Unmarshal([]byte(urlsJson),urls)
+	err := json.Unmarshal([]byte(urlsJson),&urls)
 	beego.Info(urls)
-	beego.Info(err.Error())
 	if err!=nil {
 		ctx.Redirect(302,"/login-page")
 		return
 	}
 
+	//用数组匹配需要进行遍历
+	for _,v := range urls {
+		if v == path{
+			return
+		}
+	}
+	ctx.Redirect(302,"/login-page")
+	return
 
 
 }

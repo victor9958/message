@@ -1,29 +1,28 @@
 package model
 
-import "time"
+import (
+	"github.com/astaxie/beego/orm"
+	"time"
+)
 
 type Job struct {
 	Id int             		`json:"id"`
 	//Uuid string     		`json:"uuid"`
 	Name string     		`json:"name"`
 	RoleIds string     		`json:"role_ids"`
-	//Email string   			`json:"email"`
-	//Mobile string   		`json:"mobile"`
-	//JobNo string   			`json:"job_no"`
-	//Password string 		`json:"password"`
-	//Remark string			`json:"remark"`
-	//RoleId int				`json:"role_id"`
-	//Sort int		 		`json:"sort"`
-	//Sex int					`json:"sex"`
-	//Super int				`json:"super"`
-	//Status int				`json:"status"`
-	//Position string			`json:"position"`
-	//CampusId int		 	`json:"campus_id"`
-	//CanteenId int		 	`json:"canteen_id"`
 	CreatedAt time.Time			`json:"created_at"`
 	UpdatedAt time.Time			`json:"updated_at"`
 	DeletedAt time.Time			`json:"deleted_at"`
 
+}
+
+
+func GetJobById(id int)(Job,error){
+	var job Job
+	var err error
+	err = orm.NewOrm().QueryTable("job").
+		Filter("id",id).One(&job)
+	return job,err
 }
 
 
